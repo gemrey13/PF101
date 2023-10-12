@@ -1,111 +1,128 @@
+from library import Book, Librarian, Student  # Assuming your library classes are in a module named "library"
+
 book_list = []
+librarian = Librarian('Goku', 123)
 
-class Student:
-    def __init__(self, student_name, id_no, course) -> None:
-        self.student_name = student_name
-        self.id_no = id_no
-        self.course = course
-        self.borrowed_books = []
+run = True
+login = False
+user_type = None
 
-    def borrow_book(self, title, no_copies):
-        for book in range(0, len(book_list)):
-            if book_list[book].title == title and book_list[book].no_copies >= no_copies:
-                book_list[book].borrow_book(no_copies)
-                self.borrowed_books.append((book_list[book], no_copies))
-                book_list[book].borrow_book(no_copies)
-                print(f"{self.student_name} has borrowed {no_copies} copies of '{title}'")
-                break
-        else:
-            print(f"Sorry, not enough copies of '{title}' available.")
+while run:
+    
 
-
-    # def return_book(self, title, no_copies):
-    #     for borrowed_book, num_copies in self.borrowed_books:
-    #         if self.borrowed_books[borrowed_book] == title:
-    #             borrowed_book.return_book(no_copies)
-    #             self.borrowed_books.remove((borrowed_book, num_copies))
-    #             print(f"{self.student_name} has returned {no_copies} copies of '{title}'")
-    #             break
-    #     else:
-    #         print(f"{self.student_name} did not borrow '{title}' or has already returned it.")
-
-    def return_book(self, title, no_copies):
-        for borrowed_book, num_borrowed in self.borrowed_books:
-            if borrowed_book.title == title:
-                if num_borrowed >= no_copies:
-                    borrowed_book.return_book(no_copies)
-                    self.borrowed_books.remove((borrowed_book, num_borrowed))
-                    print(f"{self.student_name} has returned {no_copies} copies of '{title}'")
-                else:
-                    print(f"Error: {self.student_name} did not borrow {no_copies} copies of '{title}'")
-                break
-        else:
-            print(f"Error: {self.student_name} did not borrow '{title}' or has already returned it.")
-
-        
-class Librarian:
-    def __init__(self, librarian_name, id_no) -> None:
-        self.librarian_name = librarian_name
-        self.id_no = id_no
-
-    def insert_book(self, title, author, publisher, no_copies):
-        new_book = Book(title, author, publisher, no_copies)
-        book_list.append(new_book)
-
-    def remove_book(self, title):
-        for book in range(0, len(book_list)):
-            if book_list[book].title == title:
-                print('A book was removed')
-                book_list.pop(book)
-                break
-
-    def check_book(self):
-        for book in range(0, len(book_list)):
-            print(f"""
-                [Book No. {book + 1}]
-                Title         : {book_list[book].title}
-                Author        : {book_list[book].author}
-                Publisher     : {book_list[book].publisher}
-                No. of copies : {book_list[book].no_copies}
+    if login == True:
+        if user_type == "student":
+            print("""
+                [1] Borrow Book
+                [2] Return Book
+                [3] Check Available Books
+                [4] Logout
             """)
+            choice = input('> ')
+
+            if choice == '1':
+                title = input("Enter the title of the book to borrow: ")
+                no_copies = int(input("Enter the number of copies to borrow: "))
+                student.borrow_book(title, no_copies)
+
+            elif choice == '2':
+                title = input("Enter the title of the book to return: ")
+                no_copies = int(input("Enter the number of copies to return: "))
+                student.return_book(title, no_copies)
+
+            elif choice == '3':
+                available_books = librarian.check_books_available(book_list)
+                print("Available books:")
+                for book in available_books:
+                    print(f"{book.title} - Copies available: {book.no_copies}")
+
+            elif choice == '4':
+                print("Logging out...")
+                login = False
+
+            else:
+                print("Invalid choice. Please try again.")
+
+        elif user_type == "librarian":
+            print("""
+                [1] Add Book
+                [2] Remove Book
+                [3] Check Available Books
+                [4] Logout
+            """)
+            choice = input("> ")
+
+            if choice == '1':
+                title = input("Enter the title of the book: ")
+                author = input("Enter the author of the book: ")
+                publisher = input("Enter the publisher of the book: ")
+                no_of_copies = int(input("Enter the number of copies: "))
+
+                librarian.insert_book(title, author, publisher, no_of_copies)
+                print(f"{title} added to the library.")
+
+            elif choice == '2':
+                title = input("Enter the title of the book to remove: ")
+                librarian.remove_book(title)
+
+            elif choice == '3':
+                available_books = librarian.check_books_available(book_list)
+                print("Available books:")
+                for book in available_books:
+                    print(f"{book.title} - Copies available: {book.no_copies}")
+
+            elif choice == '4':
+                print("Logging out...")
+                login = False
+
+            else:
+                print("Invalid choice. Please try again.")
 
 
-class Book:
-    def __init__(self, title, author, publisher, no_copies=0) -> None:
-        self.title = title
-        self.author = author
-        self.publisher = publisher
-        self.no_copies = no_copies
+    if login == False:
+        print("""
+            [1] Librarian Login
+            [2] Student Login
+            [3] Create Student Account
+            [4] Exit
+        """)
+        choice = input("> ")
 
-    def borrow_book(self, no_borrow):
-        if self.no_copies >= no_borrow:
-            self.no_copies -= no_borrow
+        if choice == '1':
+            print("Please log in as a librarian.")
+            librarian_name = str(input("Enter librarian name: "))
+            librarian_id = int(input("Enter librarian ID: "))
 
-    def return_book(self, no_return):
-        self.no_copies += no_return
+            if librarian_name == librarian.librarian_name and librarian_id == librarian.id_no:
+                print("Librarian login successful.")
+                login = True
+                continue
+            else:
+                print("Invalid librarian credentials. Please try again.")
 
+        elif choice == '2':
+            print("Please log in as a student.")
+            student_name = input("Enter your name: ")
+            student_idno = input("Enter your ID number: ")
+            student_course = input("Enter your course: ")
 
-# gem = Librarian('Gem', 565)
-# gem.insert_book('haha', 'me', 'ggg', 5)
-# gem.insert_book('nge', 'asd', 'zxca', 6)
+            student = Student(student_name, student_idno, student_course)
+            login = True
+            print("Student login successful.")
 
-# gem.check_book()
-# gem.remove_book('nge')
-# for book in range(0, len(book_list)):
-#     if book_list[book].title == 'haha':
-#         book_list[book].borrow_book(3)
-#         break
-# gem.check_book()
-# gem = Librarian('Gem', 565)
-# gem.insert_book('haha', 'me', 'ggg', 5)
-# gem.insert_book('nge', 'asd', 'zxca', 6)
+        elif choice == '3':
+            print("Creating a new student account.")
+            student_name = input("Enter your name: ")
+            student_idno = input("Enter your ID number: ")
+            student_course = input("Enter your course: ")
 
-# student = Student('Alice', 123, 'Computer Science')
+            student = Student(student_name, student_idno, student_course)
+            login = True
+            print("Student account created and logged in.")
 
-# gem.check_book()
-# student.borrow_book('haha', 4)
-# student.check_available_book()
+        elif choice == '4':
+            print("Exiting program...")
+            run = False
 
-# student.return_book('haha', 1)
-# student.check_available_book()
-# gem.check_book()
+        else:
+            print("Invalid choice. Please try again.")
