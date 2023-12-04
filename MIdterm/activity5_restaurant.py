@@ -98,4 +98,4 @@ ha = input('')
 sa = input('>')
 ha = sa
 
-print(ha)
+print(f'The number is {ha}')
